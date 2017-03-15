@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}DElastic - Table{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dataTables.bootstrap.min.css') }}" >
+    <!-- jQuery (Bootstrap 所有外掛均需要使用) -->
+    <script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+    <!-- 依需要參考已編譯外掛版本（如下），或各自獨立的外掛版本 -->
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
+ 
+<!-- jQuery -->
+<script type="text/javascript" charset="utf8" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+ 
+<!-- DataTables -->
+<script type="text/javascript" charset="utf8" src="http://cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
+{% endblock %} 
+
+{% block page_content %}
+	<div class="row" >
+		<div class="col-md-12">
+		<h1 class="page-header">{% if current_user.is_authenticated %}非工作時間</h1>
+		<h4>設定為凌晨12點至早上7點</h4>
+		<table class="table table-striped table-bordered table-hover" id="time">
+		<thead>
+			<tr>
+				<th>index</th>
+				<th>timestamp</th>
+				<th>USERNAME</th>
+				<th>SUPERUSER</th>
+				<th>IP</th>
+				<th>logtype</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for i in res%}
+				<tr>
+					<td>{{ i['_index'] }}</td>
+					<td>{{ i['_source']['timestamp'] }}</td>
+					<td>{{ i['_source']['USERNAME'] }}</td>
+					<td>{{ i['_source']['SUPERUSER'] }}</td>
+					<td>{{ i['_source']['IP'] }}</td>
+					<td>{{ i['_source']['logtype'] }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+		</table>
+						{% else %}Hello Stranger{% endif %}
+		</div>
+	</div>
+	<script>
+	$('#time').dataTable();
+	</script>
+	
+{% endblock %}

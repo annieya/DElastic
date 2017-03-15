@@ -1,0 +1,166 @@
+{% extends "base.html" %}{% block title %}DElastic{% endblock %}
+{% block head %}
+    {{ super() }}
+    <!-- Chart -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="http://cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
+
+
+{% endblock %} 
+{% block page_content %}
+	<meta charset='utf-8' />
+	<meta http-equiv='content-type' content='text/html; charset=utf-8' />
+	{{ js_resources|indent(4)|safe }}
+	{{ css_resources|indent(4)|safe }}
+	{{ plot_script|indent(4)|safe }} 
+	{{ pies_script|indent(4)|safe }}
+	<div class="row">
+		<div class="col-md-12">
+			<h1 class="page-header">{% if current_user.is_authenticated %}Dashboard</h1>
+		</div>
+				<!-- 帳號登入次數百分比 -->
+				<div class="col-md-4 col-sm-4 col-xs-4">
+				  <div class="x_panel tile fixed_height_600 overflow_hidden">
+					<div class="x_title">
+					  <h2>帳號登入次數比例</h2>
+					  <ul class="nav navbar-right panel_toolbox">
+						<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+						<li><a class="close-link"><i class="fa fa-close"></i></a></li>
+					  </ul>
+					  <div class="clearfix"></div>
+					</div>
+					<div class="x_content">
+					  <table class="" style="width:100%">
+						<tr>
+						  <th style="width:37%;">
+							<p>Top 10 排除root</p>
+						  </th>
+						  <th>
+							<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+							  <p class="">帳號</p>
+							</div>
+							<div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
+							  <p class="">次數</p>
+							</div>
+						  </th>
+						</tr>
+						<tr>
+							<td><canvas id="chart" width="140" height="140" style="margin: 10px 10px 10px 0"></canvas></td>
+								<script>
+									var pieData = [
+												{% for item,label,colors in set %}
+													{
+														value: {{item}},
+														label: "{{label}}",
+														color : "{{colors}}"
+													},
+													{% endfor %}
+											 ];
+									// get bar chart canvas
+									var mychart = document.getElementById("chart").getContext("2d");
+									steps = 10
+									max = 10
+									// draw pie chart
+									new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
+								</script>
+							<td>
+							<table class="tile_info">
+								{% for i in res[0:10] %}
+								<tr>
+									<td>
+										<p><i class="fa fa-minus" style="color:{{i['color']}}"></i>{{i['label']}}</p>
+									</td>
+									<td>{{i['value']}}</td>
+								</tr>
+							{% endfor %}
+							</table>
+							</td>
+						</tr>
+					  </table>
+					</div>
+				  </div>
+				</div>
+				<!-- 登入失敗 IP -->
+				<div class="col-md-8 col-sm-4 col-xs-12">
+				  <div class="x_panel tile fixed_height_600 overflow_hidden">
+					<div class="x_title">
+					  <h2>登入失敗 IP</h2>
+					  <ul class="nav navbar-right panel_toolbox">
+						<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+						<li><a class="close-link"><i class="fa fa-close"></i></a></li>
+					  </ul>
+					  <div class="clearfix"></div>
+					</div>
+					<div class="x_content">
+						{{ plot_div|indent(4)|safe }}
+					</div>
+				  </div>
+				</div>
+				<!-- 帳號使用Top10及其IP情形(次數) -->
+				<div class="col-md-12 col-sm-4 col-xs-12">
+				  <div class="x_panel tile fixed_height_600 overflow_hidden">
+					<div class="x_title">
+					  <h2>帳號使用Top10及其IP情形(次數)</h2>
+					  <ul class="nav navbar-right panel_toolbox">
+						<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+						<li><a class="close-link"><i class="fa fa-close"></i></a></li>
+					  </ul>
+					  <div class="clearfix"></div>
+					</div>
+					<div class="x_content">
+						{{ pies_div|indent(4)|safe }}
+					</div>
+				  </div>
+				</div>
+				<!-- 帳號及其權限群組異動 -->
+				<div class="col-md-12 col-sm-4 col-xs-12">
+				  <div class="x_panel tile fixed_height_600 overflow_hidden">
+					<div class="x_title">
+					  <h2>帳號及其權限群組異動</h2>
+					  <ul class="nav navbar-right panel_toolbox">
+						<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+						<li><a class="close-link"><i class="fa fa-close"></i></a></li>
+					  </ul>
+					  <div class="clearfix"></div>
+					</div>
+					<div class="x_content">
+						<table class="table table-striped table-bordered table-hover" id="mydata">
+						<caption>使用者帳號排除系統帳號root</caption>
+						<thead>
+							<tr>
+								<th>USERNAME</th>
+								<th>SUPERUSER</th>
+								<th>timestamp</th>
+								<th>次數</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for i in Usertable%}
+								<tr>
+									<td>{{ i['USERNAME'] }}</td>
+									<td>{{ i['SUPERUSER'] }}</td>
+									<td>{{ i['timestamp'] }}</td>
+									<td>{{ i['size'] }}</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+						</table>
+					</div>
+				  </div>
+				</div>
+	<script>
+		$('#mydata').dataTable();
+	</script>
+					</div>
+				</div>
+				<div>
+					{% else %}Hello Stranger{% endif %}
+				</div>
+			</div>
+	</div>
+	
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}DElastic - Upload{% endblock %}
+
+{% block page_content %}
+<div class="row">
+		<div class="col-md-12">
+			<h1 class="page-header">{% if current_user.is_authenticated %}Upload File</h1>
+		</div>
+</div>
+<div class="col-md-4">
+	<form action = "http://localhost:5000/auth/uploader" method = "POST" enctype = "multipart/form-data">
+		<input type = "file" multiple="" name="file[]" class="span3" /><p>
+		<p>
+		<input type = "submit"/ value = "上傳" class="span3">
+	</form>
+	{% else %}Hello Stranger{% endif %}
+</div>
+{% endblock %}
