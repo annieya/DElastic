@@ -129,14 +129,14 @@ def time():
 	c = pycurl.Curl()
 	buf =BytesIO()
 	c.setopt(c.URL, 'http://' + e_location + '/' + e_index + '/_search')
-	c.setopt(c.POSTFIELDS, '{"query":{"match_all":{}},"size":20000}')
+	c.setopt(c.POSTFIELDS, '{"query":{"bool":{"must_not":[{"match":{"USERNAME":"root"}}]}},"size":20000}')
 	c.setopt(c.WRITEFUNCTION, buf.write)
 	c.perform()
 	results = buf.getvalue()
 	results = json.loads(results.decode('utf-8'))
 	c.close
 	
-	time=['00','01','02','03','04','05','06','07']
+	time=['00','01','02','03','04','05','06']
 	res = []
 	for i in results["hits"]["hits"]: 
 		for t in time:
